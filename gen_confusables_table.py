@@ -30,14 +30,17 @@ def gen_confusables_table(f, cf):
     confusables[src] = tgt
     max_tgt_size = max(len(tgt), max_tgt_size)
 
-  f.write("""#include <stdint.h>
+  f.write('#include <stdint.h>\n\n')
 
-static uint32_t const CONFUSABLES[][{}] = {{
-""".format(max_tgt_size + 1))
+  for k, v in confusables.items():
+    f.write("static uint32_t const confusable_{:08x}[] = {{{}, 0}};\n"
+        .format(k, ', '.join('0x{:08x}'.format(t) for t in v)))
+
+  f.write('\nstatic uint32_t const* CONFUSABLES[] = {\n')
 
   for i in range(max(confusables.keys()) + 1):
-    confusable = confusables.get(i, ())
-    f.write("    {{{}}},\n".format(", ".join("0x{:x}".format(t)
-                                             for t in confusable + (0,))))
+    f.write('    ')
+    f.write('confusable_{:08x}'.format(i) if i in confusables else '0')
+    f.write(',\n')
 
-  f.write("};\n")
+  f.write('};\n')

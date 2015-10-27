@@ -38,5 +38,4 @@ setup(name='confusables',
       cmdclass=dict(build_ext=my_build_ext),
       py_modules=['confusables'],
       ext_modules=cythonize([Extension('_confusables',
-                                       sources=['src/_confusables.pyx',
-                                                'src/confusables.c'])]))
+                                       sources=['src/_confusables.pyx'])]))

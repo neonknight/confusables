@@ -1,10 +1,14 @@
 from libc.stdint cimport uint32_t
 
-cdef extern from "confusables.h":
-  const uint32_t* const lookup_confusable(uint32_t confusable)
+cdef extern from "confusables-table.gen.h":
+  const uint32_t* CONFUSABLES[]
 
-def _lookup_confusable(c):
-  confusable = lookup_confusable(ord(c))
+def lookup_confusable(c):
+  confusable = CONFUSABLES[ord(c)]
+
+  if not confusable:
+    return None
+
   ret = []
 
   i = 0
