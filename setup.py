@@ -4,16 +4,18 @@ from distutils.core import setup, Extension
 from distutils.command.build_ext import build_ext
 from Cython.Build import cythonize
 
-import os
-import requests
-import subprocess
+try:
+  cf = open('src/confusables.txt', 'rb')
+except FileNotFoundError:
+  import urllib.request
 
+  print('retrieving latest confusables.txt')
+  req = urllib.request.urlretrieve(
+      'http://www.unicode.org/Public/security/latest/confusables.txt',
+      'src/confusables.txt')
+  cf = open('src/confusables.txt', 'rb')
 
 VERSION_PREFIX = '# Version: '
-
-cf = requests.get(
-    'http://www.unicode.org/Public/security/latest/confusables.txt',
-    stream=True).raw
 
 for line in cf:
   line = line.decode('utf-8').lstrip('\ufeff').strip()
@@ -30,7 +32,7 @@ class my_build_ext(build_ext):
 
 
 setup(name='confusables',
-      version='0.2.' + unicode_version.replace('.', ''),
+      version='0.3.' + unicode_version.replace('.', ''),
       url='https://github.com/rfw/confusables',
       description='Unicode TR39 confusable detection.',
       author='Tony Young',
