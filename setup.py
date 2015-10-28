@@ -32,7 +32,7 @@ class my_build_ext(build_ext):
 
 
 setup(name='confusables',
-      version='0.3.' + unicode_version.replace('.', ''),
+      version='0.4.' + unicode_version.replace('.', ''),
       url='https://github.com/rfw/confusables',
       description='Unicode TR39 confusable detection.',
       author='Tony Young',
