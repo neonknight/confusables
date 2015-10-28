@@ -4,18 +4,12 @@ from distutils.core import setup, Extension
 from distutils.command.build_ext import build_ext
 from Cython.Build import cythonize
 
-try:
-  cf = open('src/confusables.txt', 'rb')
-except FileNotFoundError:
-  import urllib.request
-
-  print('retrieving latest confusables.txt')
-  req = urllib.request.urlretrieve(
-      'http://www.unicode.org/Public/security/latest/confusables.txt',
-      'src/confusables.txt')
-  cf = open('src/confusables.txt', 'rb')
+import gen_confusables_table
 
 VERSION_PREFIX = '# Version: '
+
+cf = gen_confusables_table.get_confusables_file()
+
 
 for line in cf:
   line = line.decode('utf-8').lstrip('\ufeff').strip()
@@ -23,16 +17,16 @@ for line in cf:
     unicode_version = line[len(VERSION_PREFIX):]
     break
 
+
 class my_build_ext(build_ext):
   def run(self):
-    import gen_confusables_table
     with open('src/confusables-table.gen.h', 'w') as f:
       gen_confusables_table.gen_confusables_table(f, cf)
     build_ext.run(self)
 
 
 setup(name='confusables',
-      version='0.4.' + unicode_version.replace('.', ''),
+      version='0.5.' + unicode_version.replace('.', ''),
       url='https://github.com/rfw/confusables',
       description='Unicode TR39 confusable detection.',
       author='Tony Young',

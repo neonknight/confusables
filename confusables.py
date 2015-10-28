@@ -19,5 +19,5 @@ def skeleton(s):
   Read more: http://unicode.org/reports/tr39/#Confusable_Detection
   """
   return unicodedata.normalize('NFD',
-    ''.join(_confusables.lookup_confusable(c) or c
-        for c in unicodedata.normalize('NFD', s)))
+      ''.join(_confusables.lookup_confusable(c) or c
+              for c in unicodedata.normalize('NFD', s)))

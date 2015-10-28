@@ -1,12 +1,22 @@
 #!/usr/bin/env python3
 
 import os
+import urllib.request
 
 
-def gen_confusables_table(f, cf):
+def get_confusables_file():
+  try:
+    return open('src/confusables.txt', 'rb')
+  except FileNotFoundError:
+    print('retrieving latest confusables.txt')
+    req = urllib.request.urlretrieve(
+        'http://www.unicode.org/Public/security/latest/confusables.txt',
+        'src/confusables.txt')
+    return open('src/confusables.txt', 'rb')
+
+
+def build_confusables_table(cf):
   confusables = {}
-
-  max_tgt_size = 0
 
   for line in cf:
     line = line.decode('utf-8').lstrip('\ufeff')
@@ -28,11 +38,16 @@ def gen_confusables_table(f, cf):
     tgt = ''.join(chr(int(t, 16)) for t in tgt.split(' '))
 
     confusables[src] = tgt
-    max_tgt_size = max(len(tgt), max_tgt_size)
+
+  return confusables
+
+
+def gen_confusables_table(f, cf):
+  confusables = build_confusables_table(cf)
 
   for k, v in confusables.items():
-    f.write("static char const confusable_{:08x}[] = {{{}, 0}};\n"
-        .format(k, ', '.join('0x{:02x}'.format(t) for t in v.encode('utf-8'))))
+    f.write('static char const confusable_{:08x}[] = "{}";\n'
+        .format(k, ''.join('\\x{:02x}'.format(t) for t in v.encode('utf-8'))))
 
   f.write('\nstatic char const* CONFUSABLES[] = {\n')
 
