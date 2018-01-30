@@ -1,18 +1,21 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 
 import os
-import urllib.request
+try:
+  #python2
+  from urllib import urlretrieve
+except ImportError:
+  #python3
+  from urllib.request import urlretrieve
 
 
 def get_confusables_file():
-  try:
-    return open('src/confusables.txt', 'rb')
-  except FileNotFoundError:
+  if not os.path.exists('src/confusables.txt'):
     print('retrieving latest confusables.txt')
-    req = urllib.request.urlretrieve(
+    req = urlretrieve(
         'http://www.unicode.org/Public/security/latest/confusables.txt',
         'src/confusables.txt')
-    return open('src/confusables.txt', 'rb')
+  return open('src/confusables.txt', 'rb')
 
 
 def build_confusables_table(cf):
