@@ -1,12 +1,15 @@
 #!/usr/bin/env python
+from __future__ import unicode_literals
 
 import os
 try:
   #python2
   from urllib import urlretrieve
+  char = unichr
 except ImportError:
   #python3
   from urllib.request import urlretrieve
+  char = chr
 
 
 def get_confusables_file():
@@ -38,7 +41,7 @@ def build_confusables_table(cf):
     src, tgt, _ = line.split(' ;\t')
 
     src = int(src, 16)
-    tgt = ''.join(chr(int(t, 16)) for t in tgt.split(' '))
+    tgt = ''.join(char(int(t, 16)) for t in tgt.split(' '))
 
     confusables[src] = tgt
 
