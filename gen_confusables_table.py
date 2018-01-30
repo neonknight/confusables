@@ -53,7 +53,7 @@ def gen_confusables_table(f, cf):
 
   for k, v in confusables.items():
     f.write('static char const confusable_{:08x}[] = "{}";\n'
-        .format(k, ''.join('\\x{:02x}'.format(t) for t in v.encode('utf-8'))))
+        .format(k, ''.join('\\x{:02x}'.format(ord(t)) for t in v.encode('utf-8'))))
 
   f.write('\nstatic char const* CONFUSABLES[] = {\n')
 
